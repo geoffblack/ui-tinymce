@@ -12,8 +12,12 @@ angular.module('ui.tinymce', [])
       link: function (scope, elm, attrs, ngModel) {
         var expression, options, tinyInstance,
           updateView = function () {
-            ngModel.$setViewValue(elm.val());
-            if (!scope.$root.$$phase) {
+            if(elm.prop("tagName").toLowerCase() === 'textarea') {
+              ngModel.$setViewValue(elm.val());
+            } else {
+              ngModel.$setViewValue(elm.html());
+            }
+            if (!scope.$$phase) {
               scope.$apply();
             }
           };
@@ -72,8 +76,11 @@ angular.module('ui.tinymce', [])
               configSetup(ed);
             }
           },
+          /* Required for 3.x, deprecated in 4.x */
           mode: 'exact',
-          elements: attrs.id
+          elements: attrs.id,
+          /* Required for 4.x */
+          selector: '#' + attrs.id
         };
         // extend options with initial uiTinymceConfig and options from directive attribute value
         angular.extend(options, uiTinymceConfig, expression);
